@@ -1,0 +1,204 @@
+﻿@model u23719649_assignment3.Models.AuthorTypesBorrows
+@using PagedList;
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Maintain";
+}
+
+<!--Main heading-->
+<div style="display: flex; justify-content: center; align-items: center; height: 8vh;">
+    <h1 style="color: #608BC1; font-family: 'Palatino Linotype', Times, serif;">
+        <u><b>Maintain Page</b></u>
+    </h1>
+</div>
+
+
+
+<!--Author table section-->
+<body style="background-color: #D4F6FF">
+    <div>
+        <div class="d-flex align-items-center">
+            <h3>Authors</h3>
+            <button class="btn btn-primary btn-add ms-auto" data-url="@Url.Action("Create","authors")">Create</button>
+        </div>
+
+        <table class="table" style="background-color: #FFDDAE">
+            <thead>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>CRUD Buttons</th>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.authors)
+                {
+                    <tr>
+                        <td>@item.name</td>
+
+                        <td>@item.surname</td>
+                        <td>
+                            <button class="btn btn-edit btn-outline-dark" data-url="@Url.Action("Edit","authors", new {id=item.authorId})">Edit</button>
+                            <button class="btn btn-delete btn-outline-dark" data-url="@Url.Action("Delete","authors", new {id=item.authorId})">Delete</button>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+        <div class="pagination-container" style="border: 2px solid #ccc; padding: 10px; border-radius: 5px; background-color: #FBFBFB">
+            @Html.PagedListPager(Model.authors, page => Url.Action("Maintain",
+            new { pageAuthors = page, pageTypes = Request.QueryString["pageTypes"], pageBorrows = Request.QueryString["pageBorrows"] }),
+            new PagedListRenderOptions //Boostrap styling of page list
+            {
+                LiElementClasses = new[] { "page-item", "mx-4" },
+                UlElementClasses = new[] { "pagination" }
+
+            }
+            )
+        </div>
+
+        </br>
+        </br>
+
+        <!--Types table section-->
+        <div>
+            <div class="d-flex align-items-center">
+                <h3>Types</h3>
+                <button class="btn btn-primary btn-add ms-auto" data-url="@Url.Action("Create","authors")">Create</button>
+            </div>
+
+            <table class="table" style="background-color: #FFDDAE">
+                <thead>
+                <th>Name</th>
+                <th>CRUD Buttons</th>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.types)
+                    {
+                        <tr>
+                            <td>@item.name</td>
+                            <td>
+                                <button class="btn btn-edit-item btn-outline-dark" data-url="@Url.Action("Edit","types", new {id=item.typeId})">Edit</button>
+                                <button class="btn btn-delete-item btn-outline-dark" data-url="@Url.Action("Delete","types", new {id=item.typeId})">Delete</button>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+            <div class="pagination-container" style="border: 2px solid #ccc; padding: 10px; border-radius: 5px; background-color: #FBFBFB">
+                @Html.PagedListPager(Model.types, page => Url.Action("Maintain",
+               new { pageAuthors = Request.QueryString["pageAypes"], pageTypes = page, pageBorrows = Request.QueryString["pageBorrows"] }),
+               new PagedListRenderOptions //Boostrap styling of page list
+               {
+                   LiElementClasses = new[] { "page-item", "mx-4" },
+                   UlElementClasses = new[] { "pagination" }
+
+               }
+               )
+            </div>
+
+            </br>
+            </br>
+
+            <!--Borrows table section-->
+            <div>
+                <div class="d-flex align-items-center">
+                    <h3>Borrows</h3>
+                    <button class="btn btn-primary btn-add-priority ms-auto " data-url="@Url.Action("Create","borrows")">Create</button>
+                </div>
+
+                <table class="table" style="background-color: #FFDDAE">
+                    <thead>
+                    <th>Student Name</th>
+                    <th>Student Surname</th>
+                    <th>Book Name </th>
+                    <th>TakenDate</th>
+                    <th>BroughtDate</th>
+                    <th>CRUD Buttons</th>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.borrows)
+                        {
+                            <tr>
+                                <td>@item.student.name</td>
+
+                                <td>@item.student.surname</td>
+
+                                <td>@item.book.name</td>
+
+                                <td>@item.takenDate</td>
+
+                                <td>@item.broughtDate</td>
+                                <td>
+                                    <button class="btn btn-edit-priority btn-outline-dark" data-url="@Url.Action("Edit","borrows", new {id=item.borrowId})">Edit</button>
+                                    <button class="btn btn-delete-priority btn-outline-dark " data-url="@Url.Action("Delete","borrows", new {id=item.borrowId})">Delete</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div class="pagination-container" style="border: 2px solid #ccc; padding: 10px; border-radius: 5px; background-color: #FBFBFB">
+                    @Html.PagedListPager(Model.borrows, page => Url.Action("Maintain",
+                   new { pageAuthors = Request.QueryString["pageAuthors"], pageTypes = Request.QueryString["pageTypes"], pageBorrows = page }),
+                   new PagedListRenderOptions //Boostrap styling of page list
+                   {
+                       LiElementClasses = new[] { "page-item", "mx-4" },
+                       UlElementClasses = new[] { "pagination" }
+
+                   }
+                   )
+                </div>
+</body>
+
+<!-- CRUD Operations -->
+<div id="myModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Item CRUD</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modal-content">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(function () {
+            // HandlING Edit, Detail, and Delete link click events
+            $(document).on("click", ".btn-edit, .btn-detail, .btn-delete, .btn-edit-item, .btn-detail-item, .btn-edit-priority, .btn-detail-priority, .btn-delete-priority, .btn-delete-item, .btn-add, .btn-add-item, .btn-add-priority", function (e) {
+                e.preventDefault();
+                var url = $(this).data("url");
+                console.log(url);
+
+                $.get(url, function (data) {
+                    $("#modal-content").empty();
+                    $("#modal-content").html(data);
+                    $("#myModal").modal("show");
+                });
+            });
+
+            // Handling form submission
+            $("#modal-content").on("submit", "form", function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var url = form.attr("action");
+                var formData = form.serialize();
+
+                $.post(url, formData, function (data) {
+
+                    $("#myModal").modal("hide");
+                    location.reload();
+                });
+            });
+        });
+    </script>
+}
+
+
+

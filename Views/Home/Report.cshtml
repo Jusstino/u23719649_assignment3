@@ -1,0 +1,88 @@
+﻿@model u23719649_assignment3.Models.studentBorrows
+@{
+    ViewBag.Title = "Report";
+}
+
+
+
+
+<body style="background-color: #D4F6FF">
+    <div style="display: flex; justify-content: center; align-items: center; height: 8vh;">
+        <h1 style="color: #608BC1; font-family: 'Palatino Linotype', Times, serif;">
+            <u><b>Current Loan Report</b></u>
+        </h1>
+    </div>
+
+    <div style="margin: 20px;">
+        <h2>Generate Report</h2>
+        <button class="btn btn-primary" id="generateReport">Generate</button>
+        <br /><br />
+        <div id="reportContainer" style="display: none;">
+            <h3>Your Report</h3>
+            <table class="table" style="background-color: #FFDDAE">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Student Surname</th>
+                        <th>Book Title</th>
+                        <th>Loan Date</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   <tr></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <label for="filename">Filename:</label>
+            <input type="text" id="filename" placeholder="Enter filename" />
+            <select id="fileType">
+                <option value="pdf">PDF</option>
+                <option value="csv">CSV</option>
+            </select>
+            <button class="btn btn-success" id="saveReport">Save Report</button>
+        </div>
+
+        <h2>Document Archive</h2>
+        <ul id="documentList">
+            @* Here, dynamically list the saved reports *@
+            <!-- Example: <li><a href="path/to/report">report.pdf</a> <button class="btn btn-danger btn-delete" data-filename="report.pdf">Delete</button></li> -->
+        </ul>
+    </div>
+</body>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $("#generateReport").click(function () {
+                // AJAX call to generate the report (fetch data from the server)
+                $.get("@Url.Action("GetCurrentLoans", "Reports")", function (data) {
+                    $("#reportContainer").show();
+                    // Populate the table with the returned data
+                    // Example code to render the data in table rows
+                });
+            });
+
+            $("#saveReport").click(function () {
+                const filename = $("#filename").val();
+                const fileType = $("#fileType").val();
+                // AJAX call to save the report
+                $.post("@Url.Action("SaveReport", "Reports")", { filename: filename, fileType: fileType }, function (response) {
+                    // Handle response and update document list
+                });
+            });
+
+            $(document).on("click", ".btn-delete", function () {
+                const filename = $(this).data("filename");
+                // AJAX call to delete the report
+                $.post("@Url.Action("DeleteReport", "Reports")", { filename: filename }, function (response) {
+                    // Handle response and refresh the document list
+                });
+            });
+        });
+    </script>
+}
+
+

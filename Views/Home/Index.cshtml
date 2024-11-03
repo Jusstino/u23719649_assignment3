@@ -1,0 +1,187 @@
+﻿@model u23719649_assignment3.Models.StudentBooks
+@using PagedList;
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Home Page";
+}
+
+
+<body style="background-color: #D4F6FF">
+
+    <!--Main heading-->
+    <div style="display: flex; justify-content: center; align-items: center; height: 8vh;">
+        <h1 style="color: #608BC1; font-family: 'Palatino Linotype', Times, serif;">
+            <u><b>Welcome to my Library!</b></u>
+        </h1>
+
+    </div>
+    <div style="display: flex; justify-content: center; align-items: center; height: 50vh; width: 100%;">
+        <img src="~/Content/images/lib.jpg" style="border-radius: 10px; width: 50%; max-width: 300px;" /> <!-- Set width and max-width to control size -->
+    </div>
+    <div class="students">
+        <!--To display them in the same line-->
+        <div class="d-flex align-items-center">
+            <h2>Students</h2>
+            <button class="btn btn-primary btn-add ms-auto" data-url="@Url.Action("Create","students")">Create</button>
+        </div>
+
+        <table class="table" style="background-color: #FFDDAE">
+            <thead>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>BirthDate</th>
+            <th>Gendre</th>
+            <th>Class</th>
+            <th>Point</th>
+            </thead>
+            <tbody>
+                @foreach (var student in Model.students)
+                {
+                    <tr>
+                        <td>
+                            @student.name
+                        </td>
+                        <td>
+                            @student.surname
+                        </td>
+                        <td>
+                            @student.birthdate
+                        </td>
+                        <td>
+                            @student.gender
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => student.@class)
+                        </td>
+                        <td>
+                            @student.point
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+        <div class="pagination-container" style="border: 2px solid #ccc; padding: 10px; border-radius: 5px; background-color: #FBFBFB">
+            @Html.PagedListPager(Model.students, page => Url.Action("Index",
+                new { pageStudents = page, pageBooks = Request.QueryString["pageBooks"] }),
+                new PagedListRenderOptions // Bootstrap styling of page list
+                {
+                    LiElementClasses = new[] { "page-item", "mx-4" },
+                    UlElementClasses = new[] { "pagination" }
+                }
+            )
+        </div>
+    </div>
+
+    </br>
+    </br>
+
+    <div class="books">
+        <!--To display them in the same line-->
+        <div class="d-flex align-items-center">
+            <h2>Books</h2>
+            <button class="btn btn-primary btn-add-item ms-auto" data-url="@Url.Action("Create","books")">Create</button>
+        </div>
+
+        <table class="table" style="background-color: #FFDDAE">
+            <thead>
+            <th>Name</th>
+            <th>Pagecount</th>
+            <th>Point</th>
+            <th>Author></th>
+            <th>Type</th>
+            <th>Status</th>
+            </thead>
+            <tbody>
+                @foreach (var book in Model.books)
+                {
+                    <tr>
+                        <td>
+                            @book.name
+                        </td>
+                        <td>
+                            @book.pagecount
+                        </td>
+                        <td>
+                            @book.point
+                        </td>
+                        <td>
+                            @book.author.name @book.author.surname
+                        </td>
+                        <td>
+                            @book.type.name
+                        </td>
+                        <td>
+                            @{
+                                var status = Model.borrows.Any(b => b.bookId == book.bookId);
+                                var result = status ? "Out" : "Available";
+                            <td>@result </td>
+
+
+
+                            }
+                            </td>
+                        </tr>
+                    }
+            </tbody>
+        </table>
+
+        <div class="pagination-container" style="border: 2px solid #ccc; padding: 10px; border-radius: 5px; background-color: #FBFBFB">
+            @Html.PagedListPager(Model.books, page => Url.Action("Index",
+            new { pageStudents = Request.QueryString["pageBooks"], pageBooks = page }),
+            new PagedListRenderOptions //Boostrap styling of page list
+            {
+                LiElementClasses = new[] { "page-item", "mx-4" },
+                UlElementClasses = new[] { "pagination" }
+
+            }
+            )
+        </div>
+</body>
+
+<!-- CRUD Operations -->
+<div id="myModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Item CRUD</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modal-content">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(function () {
+            // HandlING Add link click events
+            $(document).on("click", " .btn-add, .btn-add-item", function (e) {
+                e.preventDefault();
+                var url = $(this).data("url");
+                console.log(url);
+
+                $.get(url, function (data) {
+                    $("#modal-content").empty();
+                    $("#modal-content").html(data);
+                    $("#myModal").modal("show");
+                });
+            });
+
+            // Handling form submission
+            $("#modal-content").on("submit", "form", function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var url = form.attr("action");
+                var formData = form.serialize();
+
+                $.post(url, formData, function (data) {
+
+                    $("#myModal").modal("hide");
+                    location.reload();
+                });
+            });
+        });
+    </script>
+}
